@@ -14,9 +14,10 @@ public class CommentableTransaction extends Transaction implements Commentable {
 
     List<String> comments;
 
-    public CommentableTransaction(int transactionId, LocalDateTime date,
-                                  String category, BigDecimal amount, List<String> comments) {
-        super(transactionId, date, category, amount);
+    public CommentableTransaction(int accountId, int transactionId,
+                                  LocalDateTime date, String category,
+                                  BigDecimal amount, List<String> comments) {
+        super(accountId, transactionId, date, category, amount);
         this.comments = comments;
     }
 

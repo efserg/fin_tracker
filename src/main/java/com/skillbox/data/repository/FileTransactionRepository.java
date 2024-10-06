@@ -1,4 +1,4 @@
-package com.skillbox.data;
+package com.skillbox.data.repository;
 
 import com.skillbox.data.model.CommentableTransaction;
 import com.skillbox.data.model.ForeignCurrencyTransaction;
@@ -16,34 +16,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransactionReaderImpl implements TransactionReader {
+public class FileTransactionRepository implements TransactionRepository {
 
     private final String inputFilename;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     public static final String DELIMITER = ",";
     public static final String INFO_DELIMITER = ";";
 
-    public TransactionReaderImpl(String inputFilename) {
+    public FileTransactionRepository(String inputFilename) {
         this.inputFilename = inputFilename;
     }
 
     @Override
-    public List<Transaction> readFile() {
+    public List<Transaction> readAll() {
         List<Transaction> transactions = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFilename))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(DELIMITER, 6);
-                int transactionId = Integer.parseInt(parts[0]);
-                LocalDateTime date = LocalDateTime.parse(parts[1], DATE_TIME_FORMATTER);
-                String category = parts[2];
-                BigDecimal amount = new BigDecimal(parts[3]);
-                String type = parts[4];
-                String transactionInfo = parts[5];
-
-                Transaction transaction = createTransaction(transactionId, date, category, amount, type,
-                        transactionInfo);
+                Transaction transaction = createTransaction(line);
                 transactions.add(transaction);
             }
         } catch (IOException e) {
@@ -53,26 +44,32 @@ public class TransactionReaderImpl implements TransactionReader {
         return transactions;
     }
 
-    private Transaction createTransaction(int transactionId, LocalDateTime date,
-                                          String category, BigDecimal amount,
-                                          String type, String transactionInfo) {
+    private Transaction createTransaction(String line) {
+        String[] parts = line.split(DELIMITER, 7);
+        int accountId = Integer.parseInt(parts[0]);
+        int transactionId = Integer.parseInt(parts[1]);
+        LocalDateTime date = LocalDateTime.parse(parts[2], DATE_TIME_FORMATTER);
+        String category = parts[3];
+        BigDecimal amount = new BigDecimal(parts[4]);
+        String type = parts[5];
+        String transactionInfo = parts[6];
         return switch (type) {
-            case "Regular" -> new RegularTransaction(transactionId, date, amount, category);
+            case "Regular" -> new RegularTransaction(accountId, transactionId, date, amount, category);
             case "Taxable" -> {
                 BigDecimal taxRate = getTaxRate(transactionInfo);
-                yield new TaxableTransaction(transactionId, date, category, amount, taxRate);
+                yield new TaxableTransaction(accountId, transactionId, date, category, amount, taxRate);
             }
             case "Recurrent" -> {
                 RecurrencePattern recurrencePattern = getRecurrencePattern(transactionInfo);
-                yield new RecurrentTransaction(transactionId, date, category, amount, recurrencePattern);
+                yield new RecurrentTransaction(accountId, transactionId, date, category, amount, recurrencePattern);
             }
             case "ForeignCurrency" -> {
                 BigDecimal exchangeRate = getExchangeRate(transactionInfo);
-                yield new ForeignCurrencyTransaction(transactionId, date, category, amount, exchangeRate);
+                yield new ForeignCurrencyTransaction(accountId, transactionId, date, category, amount, exchangeRate);
             }
             case "Commentable" -> {
                 List<String> comments = getComments(transactionInfo);
-                yield new CommentableTransaction(transactionId, date, category, amount, comments);
+                yield new CommentableTransaction(accountId, transactionId, date, category, amount, comments);
             }
             default -> throw new IllegalArgumentException("Unknown transaction type: " + type);
         };

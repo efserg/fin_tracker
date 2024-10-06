@@ -1,16 +1,15 @@
-package com.skillbox.data;
+package com.skillbox.data.repository;
 
-import com.skillbox.console.dto.Analytic;
+import com.skillbox.data.model.Analytic;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
-public class AnalyticSaverImpl implements AnalyticSaver {
+public class FileAnalyticRepository implements AnalyticRepository {
 
     private final String outputFilename;
 
-    public AnalyticSaverImpl(String outputFilename) {
+    public FileAnalyticRepository(String outputFilename) {
         this.outputFilename = outputFilename;
     }
 

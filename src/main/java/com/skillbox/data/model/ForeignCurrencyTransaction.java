@@ -13,9 +13,10 @@ public class ForeignCurrencyTransaction extends Transaction {
 
     private final BigDecimal exchangeRate;
 
-    public ForeignCurrencyTransaction(int transactionId, LocalDateTime date, String category, BigDecimal amount,
-                                      BigDecimal exchangeRate) {
-        super(transactionId, date, category, amount);
+    public ForeignCurrencyTransaction(int accountId, int transactionId,
+                                      LocalDateTime date, String category,
+                                      BigDecimal amount, BigDecimal exchangeRate) {
+        super(accountId, transactionId, date, category, amount);
 
         this.exchangeRate = exchangeRate;
     }

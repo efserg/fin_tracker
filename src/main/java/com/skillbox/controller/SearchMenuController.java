@@ -1,43 +1,31 @@
-package com.skillbox.console;
+package com.skillbox.controller;
 
-import com.skillbox.console.dto.TransactionFilterDto;
+import com.skillbox.controller.dto.TransactionFilterDto;
+import com.skillbox.controller.option.SearchOption;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
 
 /**
  * Консольный контроллер для управления навигацией по функционалу поиска транзакций.
  */
-public class SearchMenuController extends AbstractMenuController {
+public class SearchMenuController extends AbstractMenuController<SearchOption> {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    private static final int ALL_TRANSACTION = 1;
-    private static final int SEARCH_BY_CATEGORY = 2;
-    private static final int SEARCH_BY_DATES = 3;
-    private static final int SEARCH_BY_AMOUNT = 4;
-    private static final int SEARCH_BY_COMMENT = 5;
-    private static final Set<Integer> OPTIONS = Set.of(
-            ALL_TRANSACTION,
-            SEARCH_BY_CATEGORY,
-            SEARCH_BY_DATES,
-            SEARCH_BY_AMOUNT,
-            SEARCH_BY_COMMENT);
-
     public SearchMenuController() {
-        super(OPTIONS);
+        super(SearchOption.class, "Выберите способ поиска транзакции");
     }
 
     public TransactionFilterDto getTransactionFilter() {
         TransactionFilterDto filter = new TransactionFilterDto();
         while (true) {
-            int i = selectMenu();
-            switch (i) {
+            SearchOption option = selectMenu();
+            switch (option) {
+                case EXIT:
+                    return filter;
                 case ALL_TRANSACTION:
                     return new TransactionFilterDto();
-                case EXIT_OPTION:
-                    return filter;
                 case SEARCH_BY_CATEGORY:
                     filter = inputCategory(filter);
                     break;
@@ -51,7 +39,7 @@ public class SearchMenuController extends AbstractMenuController {
                     filter = inputComment(filter);
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + i);
+                    throw new IllegalStateException("Unexpected value: " + option);
             }
         }
     }
@@ -101,14 +89,4 @@ public class SearchMenuController extends AbstractMenuController {
         return filter.withCategory(category);
     }
 
-    @Override
-    protected String getMenuDescription() {
-        return "\nФильтрация транзакций\n"
-                + "\n"
-                + ALL_TRANSACTION + " – выбрать все транзакции (сбросит все ранее заданные фильтры)\n"
-                + SEARCH_BY_CATEGORY + " – поиск по категориям\n"
-                + SEARCH_BY_DATES + " – поиск по диапазону дат\n"
-                + SEARCH_BY_AMOUNT + " – поиск по диапазону суммы транзакций\n"
-                + SEARCH_BY_COMMENT + " – поиск по комментарию (для транзакций, поддерживающих комментарии)\n";
-    }
 }

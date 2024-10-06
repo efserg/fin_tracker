@@ -15,9 +15,9 @@ public class RecurrentTransaction extends Transaction implements Recurring {
 
     private final RecurrencePattern recurrencePattern;
 
-    public RecurrentTransaction(int transactionId, LocalDateTime date, String category, BigDecimal amount,
+    public RecurrentTransaction(int accountId, int transactionId, LocalDateTime date, String category, BigDecimal amount,
                                 RecurrencePattern recurrencePattern) {
-        super(transactionId, date, category, amount);
+        super(accountId, transactionId, date, category, amount);
         this.recurrencePattern = recurrencePattern;
     }
 

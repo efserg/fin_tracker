@@ -1,4 +1,4 @@
-package com.skillbox.console.dto;
+package com.skillbox.controller.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,6 +19,8 @@ public class TransactionFilterDto {
     BigDecimal amountFrom;
     BigDecimal amountTo;
     String comment;
+    Integer accountType;
+    Integer userId;
 
     @Override
     public String toString() {
@@ -27,6 +29,8 @@ public class TransactionFilterDto {
                 (endDate == null ? "" : ", конечная дата - " + endDate) +
                 (amountFrom == null ? "" : ", минимальная сумма - " + amountFrom) +
                 (amountTo == null ? "" : ", максимальная сумма - " + amountTo) +
+                (accountType == null ? "" : ", тип счета - " + accountType) +
+                (userId == null ? "" : ", ID пользователя - " + userId) +
                 (comment == null ? "" : ", комментарий: '" + comment + '\'');
     }
 }

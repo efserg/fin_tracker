@@ -1,13 +1,12 @@
 package com.skillbox.service;
 
-import com.skillbox.console.dto.TransactionFilterDto;
+import com.skillbox.controller.dto.TransactionFilterDto;
 import com.skillbox.data.model.Commentable;
 import com.skillbox.data.model.Recurring;
 import com.skillbox.data.model.Transaction;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.function.Predicate;
 import lombok.experimental.UtilityClass;
 

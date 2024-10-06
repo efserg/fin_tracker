@@ -13,10 +13,10 @@ public class TaxableTransaction extends Transaction implements Taxable {
 
     BigDecimal taxRate;
 
-    public TaxableTransaction(int transactionId, LocalDateTime date,
+    public TaxableTransaction(int accountId, int transactionId, LocalDateTime date,
                               String category, BigDecimal amount,
                               BigDecimal taxRate) {
-        super(transactionId, date, category, amount);
+        super(accountId, transactionId, date, category, amount);
         this.taxRate = taxRate;
     }
 

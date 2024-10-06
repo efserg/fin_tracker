@@ -1,33 +1,26 @@
-package com.skillbox.console;
+package com.skillbox.controller;
 
-import com.skillbox.console.dto.AggregateOption;
-import com.skillbox.console.dto.GroupOption;
-import com.skillbox.console.dto.TransactionFilterDto;
-import com.skillbox.console.dto.Analytic;
-import com.skillbox.data.AnalyticSaver;
+import com.skillbox.controller.dto.TransactionFilterDto;
+import com.skillbox.controller.option.AggregateOption;
+import com.skillbox.controller.option.GroupOption;
+import com.skillbox.controller.option.MainMenuOption;
+import com.skillbox.data.model.Analytic;
+import com.skillbox.data.repository.AnalyticRepository;
 import com.skillbox.service.TransactionService;
-import java.util.Set;
 
 /**
  * Консольный контроллер для управления навигацией по главному меню.
  */
-public class MainMenuController extends AbstractMenuController {
-
-    private static final int SEARCH_CRITERIA = 1;
-    private static final int GROUP_OPTION = 2;
-    private static final int AGGREGATION_METHOD = 3;
-    private static final int CALCULATE_ANALYTICS = 4;
-    private static final int SAVE_ANALYTICS = 5;
-    public static final Set<Integer> OPTIONS = Set.of(SEARCH_CRITERIA, GROUP_OPTION, AGGREGATION_METHOD, CALCULATE_ANALYTICS, SAVE_ANALYTICS);
+public class MainMenuController extends AbstractMenuController<MainMenuOption> {
 
     private final TransactionService transactionService;
-    private final AnalyticSaver saver;
+    private final AnalyticRepository saver;
     private final GroupMenuController analyticsMenuController;
     private final AggregateMenuController aggregateMenuController;
     private final SearchMenuController searchMenuController;
 
-    public MainMenuController(TransactionService transactionService, AnalyticSaver saver) {
-        super(OPTIONS);
+    public MainMenuController(TransactionService transactionService, AnalyticRepository saver) {
+        super(MainMenuOption.class, "Анализ финансов");
         this.transactionService = transactionService;
         this.saver = saver;
         this.analyticsMenuController = new GroupMenuController();
@@ -45,7 +38,7 @@ public class MainMenuController extends AbstractMenuController {
         AggregateOption aggregateOption = AggregateOption.SUM;
         Analytic analytics = null;
         while (true) {
-            int i = selectMenu();
+            MainMenuOption i = selectMenu();
             switch (i) {
                 case SEARCH_CRITERIA:
                     transactionFilter = searchMenuController.getTransactionFilter();
@@ -63,25 +56,14 @@ public class MainMenuController extends AbstractMenuController {
                     break;
                 case SAVE_ANALYTICS:
                     if (analytics == null) {
-                        System.out.println("Необходимо рассчитать аналитику");
+                        System.err.println("Необходимо сначала рассчитать аналитику");
                         break;
                     }
                     saver.save(analytics);
                     break;
-                case EXIT_OPTION:
+                case EXIT:
                     return;
             }
         }
-    }
-
-    @Override
-    protected String getMenuDescription() {
-        return "\nАнализ финансов\n"
-                + "\n"
-                + SEARCH_CRITERIA + " – задать критерии поиска транзакций\n"
-                + GROUP_OPTION + " – выбрать опцию группировки\n"
-                + AGGREGATION_METHOD + " – выбрать способ агрегации\n"
-                + CALCULATE_ANALYTICS + " – рассчитать и вывести аналитику\n"
-                + SAVE_ANALYTICS + " – сохранить аналитику\n";
     }
 }

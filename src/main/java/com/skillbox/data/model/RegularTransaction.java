@@ -11,7 +11,9 @@ import lombok.Value;
 @ToString(callSuper = true)
 public class RegularTransaction extends Transaction {
 
-    public RegularTransaction(int transactionId, LocalDateTime date, BigDecimal amount, String category) {
-        super(transactionId, date, category, amount);
+    public RegularTransaction(int accountId, int transactionId,
+                              LocalDateTime date, BigDecimal amount,
+                              String category) {
+        super(accountId, transactionId, date, category, amount);
     }
 }
