@@ -62,7 +62,7 @@ public class SearchMenuController extends AbstractMenuController<SearchOption> {
                 ? null : new BigDecimal(min);
         BigDecimal maxAmount = (max == null || max.isBlank())
                 ? null : new BigDecimal(max);
-        return filter.withAmountFrom(minAmount).withAmountTo(maxAmount);
+        return filter.withMinAmount(minAmount).withMaxAmount(maxAmount);
     }
 
     private TransactionFilterDto inputDates(TransactionFilterDto filter) {

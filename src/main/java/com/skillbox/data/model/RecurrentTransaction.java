@@ -13,7 +13,7 @@ import lombok.Value;
 @ToString(callSuper = true)
 public class RecurrentTransaction extends Transaction implements Recurring {
 
-    private final RecurrencePattern recurrencePattern;
+    RecurrencePattern recurrencePattern;
 
     public RecurrentTransaction(int accountId, int transactionId, LocalDateTime date, String category, BigDecimal amount,
                                 RecurrencePattern recurrencePattern) {
@@ -54,6 +54,7 @@ public class RecurrentTransaction extends Transaction implements Recurring {
         return getAmount().multiply(new BigDecimal(totalOccurrences));
     }
 
+    @Override
     public boolean isExecutedBetween(LocalDateTime startDate, LocalDateTime endDate) {
         LocalDateTime initialDate = getDate();
         Duration duration = recurrencePattern.getDuration();

@@ -10,7 +10,6 @@ import com.skillbox.data.repository.AccountRepository;
 import com.skillbox.data.repository.TransactionRepository;
 import com.skillbox.data.model.Transaction;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,10 +31,22 @@ public class TransactionServiceImpl implements TransactionService {
     public Analytic calculateAnalytics(TransactionFilterDto transactionFilter,
                                        GroupOption groupOption,
                                        AggregateOption aggregateOption) {
+
+        assert transactionFilter != null : "transactionFilter == null";
+        assert groupOption != null : "groupOption == null";
+        assert aggregateOption != null : "aggregateOption == null";
+
         List<Transaction> transactions = transactionRepository.readAll();
         List<Account> accounts = accountRepository.readAll();
 
-        Predicate<Transaction> predicate = TransactionPredicate.predicateByFilter(transactionFilter);
+        Map<Integer, AccountType> accountTypeMap = accounts.stream()
+                .collect(Collectors.toMap(Account::getAccountId, Account::getAccountType));
+
+        Map<Integer, Integer> accountUserIdMap = accounts.stream()
+                .collect(Collectors.toMap(Account::getAccountId, Account::getUserId));
+
+        Predicate<Transaction> predicate = transactionFilter.buildPredicate();
+
         Function<Transaction, ?> groupFunction = switch (groupOption) {
             case GROUP_BY_MONTHS -> transaction -> transaction.getDate()
                     .getMonth().getValue();
@@ -45,8 +56,8 @@ public class TransactionServiceImpl implements TransactionService {
                     .getDayOfWeek().getValue();
             case GROUP_BY_CATEGORY -> Transaction::getCategory;
             case GROUP_BY_INCOME_AND_EXPENSE -> transaction -> transaction.getAmount().compareTo(BigDecimal.ZERO) >= 0;
-            case GROUP_BY_ACCOUNT_TYPE -> createAccountGroupFunction(accounts);
-            case GROUP_BY_USER_ID -> createUserGroupFunction(accounts);
+            case GROUP_BY_ACCOUNT_TYPE -> createAccountGroupFunction(accountTypeMap);
+            case GROUP_BY_USER_ID -> createUserGroupFunction(accountUserIdMap);
             default -> Function.identity();
         };
 
@@ -56,21 +67,20 @@ public class TransactionServiceImpl implements TransactionService {
                     Collectors.averagingDouble((Transaction transaction) -> transaction.getAmount().doubleValue());
             case COUNT -> Collectors.counting();
         };
+
         Map<?, ?> data = transactions
                 .stream()
                 .filter(predicate)
                 .collect(Collectors.groupingBy(groupFunction, collector));
-        return new Analytic(LocalDateTime.now(), groupOption.getName(), aggregateOption.getName(), transactionFilter.toString(), data);
+
+        return new Analytic(groupOption, aggregateOption, transactionFilter, data);
     }
 
-    private Function<Transaction, AccountType> createAccountGroupFunction(List<Account> accounts) {
-        Map<Integer, AccountType> accountTypeMap = accounts.stream()
-                .collect(Collectors.toMap(Account::getAccountId, Account::getAccountType));
+    private Function<Transaction, AccountType> createAccountGroupFunction(Map<Integer, AccountType> accountTypeMap) {
         return transaction -> accountTypeMap.get(transaction.getAccountId());
     }
-    private Function<Transaction, Integer> createUserGroupFunction(List<Account> accounts) {
-        Map<Integer, Integer> accountTypeMap = accounts.stream()
-                .collect(Collectors.toMap(Account::getAccountId, Account::getUserId));
-        return transaction -> accountTypeMap.get(transaction.getAccountId());
+
+    private Function<Transaction, Integer> createUserGroupFunction(Map<Integer, Integer> accountUserIdMap) {
+        return transaction -> accountUserIdMap.get(transaction.getAccountId());
     }
 }

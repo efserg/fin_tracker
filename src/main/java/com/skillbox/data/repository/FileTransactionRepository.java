@@ -19,7 +19,7 @@ import java.util.List;
 public class FileTransactionRepository implements TransactionRepository {
 
     private final String inputFilename;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     public static final String DELIMITER = ",";
     public static final String INFO_DELIMITER = ";";
 

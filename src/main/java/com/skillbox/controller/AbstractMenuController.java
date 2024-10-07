@@ -39,7 +39,7 @@ public abstract class AbstractMenuController<E extends Enum<E> & MenuOption> {
 
         while (true) {
             System.out.println(description);
-            System.out.println(this.menu);
+            System.out.println(menu);
             System.out.print("Введите нужную опцию и нажмите Enter: ");
 
             option = scanner.nextInt();

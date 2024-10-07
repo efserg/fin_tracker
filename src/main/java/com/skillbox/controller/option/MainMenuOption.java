@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum MainMenuOption implements MenuOption {
     EXIT("выход из приложения"),
     SEARCH_CRITERIA("задать критерии поиска транзакций"),
-    GROUP_OPTION("выбрать опцию группировки"),
-    AGGREGATION_METHOD("выбрать способ агрегации"),
+    GROUP_OPTION("выбрать поле для группировки"),
+    AGGREGATION_METHOD("выбрать функцию агрегации"),
     CALCULATE_ANALYTICS("рассчитать и вывести аналитику"),
     SAVE_ANALYTICS("сохранить аналитику");
 
