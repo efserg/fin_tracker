@@ -1,8 +1,5 @@
 package com.skillbox.controller.option;
 
-import lombok.Getter;
-
-@Getter
 public enum SearchOption implements MenuOption {
     EXIT("сохранить поиск и вернуться назад"),
     ALL_TRANSACTION("выбрать все транзакции (сбросит все ранее заданные фильтры)"),
@@ -24,5 +21,10 @@ public enum SearchOption implements MenuOption {
     @Override
     public int getOption() {
         return ordinal();
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 }

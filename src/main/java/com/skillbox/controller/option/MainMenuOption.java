@@ -1,8 +1,6 @@
 package com.skillbox.controller.option;
 
-import lombok.Getter;
 
-@Getter
 public enum MainMenuOption implements MenuOption {
     EXIT("выход из приложения"),
     SEARCH_CRITERIA("задать критерии поиска транзакций"),
@@ -25,5 +23,10 @@ public enum MainMenuOption implements MenuOption {
     @Override
     public int getOption() {
         return ordinal();
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 }

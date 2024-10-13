@@ -15,17 +15,13 @@ public class MainMenuController extends AbstractMenuController<MainMenuOption> {
 
     private final TransactionService transactionService;
     private final AnalyticRepository saver;
-    private final GroupMenuController analyticsMenuController;
-    private final AggregateMenuController aggregateMenuController;
     private final SearchMenuController searchMenuController;
 
     public MainMenuController(TransactionService transactionService, AnalyticRepository saver) {
         super(MainMenuOption.class, "Анализ финансов");
         this.transactionService = transactionService;
         this.saver = saver;
-        this.analyticsMenuController = new GroupMenuController();
         this.searchMenuController = new SearchMenuController();
-        this.aggregateMenuController = new AggregateMenuController();
     }
 
     public void start() {
@@ -34,8 +30,8 @@ public class MainMenuController extends AbstractMenuController<MainMenuOption> {
 
     private void goMainMenu() {
         TransactionFilterDto transactionFilter = new TransactionFilterDto();
-        GroupOption groupOption = GroupOption.WITHOUT_GROUPING;
-        AggregateOption aggregateOption = AggregateOption.SUM;
+        GroupOption groupOption = null;
+        AggregateOption aggregateOption = null;
         Analytic analytics = null;
         while (true) {
             MainMenuOption i = selectMenu();
@@ -44,10 +40,12 @@ public class MainMenuController extends AbstractMenuController<MainMenuOption> {
                     transactionFilter = searchMenuController.getTransactionFilter();
                     break;
                 case GROUP_OPTION:
-                    groupOption = analyticsMenuController.getGroupOption();
+                    // TODO: реализуйте класс контроллера выбора поля группировки
+                    groupOption = null;
                     break;
                 case AGGREGATION_METHOD:
-                    aggregateOption = aggregateMenuController.getAggregateOption();
+                    // TODO: реализуйте класс контроллера выбора поля группировки
+                    aggregateOption = null;
                     break;
                 case CALCULATE_ANALYTICS:
                     analytics = transactionService.calculateAnalytics(transactionFilter,

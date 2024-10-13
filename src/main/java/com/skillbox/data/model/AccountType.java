@@ -4,9 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
-@Getter
 public enum AccountType {
     /**
      * Текущий счет обычно используется для повседневных финансовых операций, таких как оплата счетов, покупки и
@@ -38,5 +36,9 @@ public enum AccountType {
 
     public static AccountType of(int type) {
         return MAP.get(type);
+    }
+
+    public int getType() {
+        return type;
     }
 }

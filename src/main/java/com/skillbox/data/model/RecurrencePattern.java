@@ -5,9 +5,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
-@Getter
+/**
+ * Класс, представляющий паттерн повторения транзакций.
+ */
 public enum RecurrencePattern {
     HOURLY("hourly", Duration.ofHours(1)),
     DAILY("daily", Duration.ofDays(1)),
@@ -29,4 +30,11 @@ public enum RecurrencePattern {
         return MAP.get(recurrencePattern);
     }
 
+    public String getPattern() {
+        return pattern;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
 }
