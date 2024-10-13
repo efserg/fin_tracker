@@ -5,7 +5,7 @@ import com.skillbox.controller.MainMenuController;
 import com.skillbox.data.repository.AccountRepository;
 import com.skillbox.data.repository.FileAccountRepository;
 import com.skillbox.data.repository.AnalyticRepository;
-import com.skillbox.data.repository.FileAnalyticRepository;
+import com.skillbox.data.repository.JsonAnalyticRepository;
 import com.skillbox.data.repository.TransactionRepository;
 import com.skillbox.data.repository.FileTransactionRepository;
 import com.skillbox.service.TransactionService;
@@ -28,7 +28,7 @@ public class Application {
         AccountRepository accountReader = new FileAccountRepository(accountFilename);
         TransactionRepository transactionReader = new FileTransactionRepository(transactionFilename);
         TransactionService transactionService = new TransactionServiceImpl(accountReader, transactionReader);
-        AnalyticRepository saver = new FileAnalyticRepository(outputFilename);
+        AnalyticRepository saver = new JsonAnalyticRepository(outputFilename);
         new MainMenuController(transactionService, saver).start();
     }
 }

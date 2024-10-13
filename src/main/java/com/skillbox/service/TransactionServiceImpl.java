@@ -62,7 +62,7 @@ public class TransactionServiceImpl implements TransactionService {
         };
 
         Collector<Transaction, ?, ?> collector = switch (aggregateOption) {
-            case SUM, EXIT -> Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add);
+            case SUM -> Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add);
             case AVERAGE ->
                     Collectors.averagingDouble((Transaction transaction) -> transaction.getAmount().doubleValue());
             case COUNT -> Collectors.counting();

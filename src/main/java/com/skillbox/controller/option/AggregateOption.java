@@ -4,7 +4,6 @@ import lombok.Getter;
 
 @Getter
 public enum AggregateOption implements MenuOption {
-    EXIT("вернуться назад"),
     SUM("подсчет суммы"),
     AVERAGE("подсчет среднего значения"),
     COUNT("подсчет количества");
