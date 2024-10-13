@@ -1,6 +1,7 @@
 package com.skillbox.data.repository;
 
 import com.skillbox.data.model.Account;
+import com.skillbox.exception.AccountReadException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class FileAccountRepository implements AccountRepository {
                 accounts.add(account);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка чтения файла", e);
+            throw new AccountReadException(e);
         }
 
         return accounts;

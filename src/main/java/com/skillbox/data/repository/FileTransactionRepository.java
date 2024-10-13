@@ -7,6 +7,7 @@ import com.skillbox.data.model.RecurrentTransaction;
 import com.skillbox.data.model.RegularTransaction;
 import com.skillbox.data.model.TaxableTransaction;
 import com.skillbox.data.model.Transaction;
+import com.skillbox.exception.TransactionReadException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class FileTransactionRepository implements TransactionRepository {
                 transactions.add(transaction);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка чтения файла", e);
+            throw new TransactionReadException(e);
         }
 
         return transactions;

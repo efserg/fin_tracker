@@ -46,7 +46,7 @@ public abstract class AbstractMenuController<E extends Enum<E> & MenuOption> {
             if (numOptions.contains(option)) {
                 break;
             }
-            System.out.println("Выбрана неверная опция!\n"
+            System.err.println("Выбрана неверная опция!\n"
                     + "Попробуйте заново.\n");
         }
         return OptionUtils.of(options, option);
