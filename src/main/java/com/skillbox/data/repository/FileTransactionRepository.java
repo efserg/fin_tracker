@@ -8,6 +8,7 @@ import com.skillbox.data.model.RegularTransaction;
 import com.skillbox.data.model.TaxableTransaction;
 import com.skillbox.data.model.Transaction;
 import com.skillbox.exception.TransactionReadException;
+import com.skillbox.exception.UnknownTransactionTypeException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -72,7 +73,7 @@ public class FileTransactionRepository implements TransactionRepository {
                 List<String> comments = getComments(transactionInfo);
                 yield new CommentableTransaction(accountId, transactionId, date, category, amount, comments);
             }
-            default -> throw new IllegalArgumentException("Unknown transaction type: " + type);
+            default -> throw new UnknownTransactionTypeException(type);
         };
     }
 
