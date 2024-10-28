@@ -1,7 +1,9 @@
 package com.skillbox.data.model;
 
+import com.skillbox.exception.TaxRateNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
@@ -15,9 +17,9 @@ public class TaxableTransaction extends Transaction implements Taxable {
 
     public TaxableTransaction(int accountId, int transactionId, LocalDateTime date,
                               String category, BigDecimal amount,
-                              BigDecimal taxRate) {
+                              List<String> infos) {
         super(accountId, transactionId, date, category, amount);
-        this.taxRate = taxRate;
+        this.taxRate = infos.stream().findFirst().map(BigDecimal::new).orElseThrow(() -> new TaxRateNotFoundException(transactionId));
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.skillbox.controller.option;
 import java.util.Arrays;
 
 /**
- * Утилитный (вспомогательный) класс для работы с меню
+ * Вспомогательный класс для работы с меню
  */
 public final class OptionUtils {
 

@@ -1,7 +1,9 @@
 package com.skillbox.data.model;
 
+import com.skillbox.exception.ExchangeRateNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
@@ -11,14 +13,13 @@ import lombok.Value;
 @ToString(callSuper = true)
 public class ForeignCurrencyTransaction extends Transaction {
 
-    private final BigDecimal exchangeRate;
+    BigDecimal exchangeRate;
 
     public ForeignCurrencyTransaction(int accountId, int transactionId,
                                       LocalDateTime date, String category,
-                                      BigDecimal amount, BigDecimal exchangeRate) {
+                                      BigDecimal amount, List<String> infos) {
         super(accountId, transactionId, date, category, amount);
-
-        this.exchangeRate = exchangeRate;
+        this.exchangeRate = infos.stream().findFirst().map(BigDecimal::new).orElseThrow(() -> new ExchangeRateNotFoundException(transactionId));
     }
 
     @Override

@@ -56,8 +56,8 @@ public class TransactionServiceImpl implements TransactionService {
                     .getDayOfWeek().getValue();
             case GROUP_BY_CATEGORY -> Transaction::getCategory;
             case GROUP_BY_INCOME_AND_EXPENSE -> transaction -> transaction.getAmount().compareTo(BigDecimal.ZERO) >= 0;
-            case GROUP_BY_ACCOUNT_TYPE -> createAccountGroupFunction(accountTypeMap);
-            case GROUP_BY_USER_ID -> createUserGroupFunction(accountUserIdMap);
+            case GROUP_BY_ACCOUNT_TYPE -> transaction -> accountTypeMap.get(transaction.getAccountId());
+            case GROUP_BY_USER_ID -> transaction -> accountUserIdMap.get(transaction.getAccountId());
             default -> Function.identity();
         };
 
@@ -76,11 +76,4 @@ public class TransactionServiceImpl implements TransactionService {
         return new Analytic(groupOption, aggregateOption, transactionFilter, data);
     }
 
-    private Function<Transaction, AccountType> createAccountGroupFunction(Map<Integer, AccountType> accountTypeMap) {
-        return transaction -> accountTypeMap.get(transaction.getAccountId());
-    }
-
-    private Function<Transaction, Integer> createUserGroupFunction(Map<Integer, Integer> accountUserIdMap) {
-        return transaction -> accountUserIdMap.get(transaction.getAccountId());
-    }
 }

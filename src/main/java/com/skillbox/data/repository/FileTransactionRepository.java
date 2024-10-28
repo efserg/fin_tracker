@@ -2,7 +2,6 @@ package com.skillbox.data.repository;
 
 import com.skillbox.data.model.CommentableTransaction;
 import com.skillbox.data.model.ForeignCurrencyTransaction;
-import com.skillbox.data.model.RecurrencePattern;
 import com.skillbox.data.model.RecurrentTransaction;
 import com.skillbox.data.model.RegularTransaction;
 import com.skillbox.data.model.TaxableTransaction;
@@ -54,42 +53,18 @@ public class FileTransactionRepository implements TransactionRepository {
         String category = parts[3];
         BigDecimal amount = new BigDecimal(parts[4]);
         String type = parts[5];
-        String transactionInfo = parts[6];
+        List<String> transactionInfos = List.of(parts[6].split(INFO_DELIMITER));
         return switch (type) {
             case "Regular" -> new RegularTransaction(accountId, transactionId, date, amount, category);
-            case "Taxable" -> {
-                BigDecimal taxRate = getTaxRate(transactionInfo);
-                yield new TaxableTransaction(accountId, transactionId, date, category, amount, taxRate);
-            }
-            case "Recurrent" -> {
-                RecurrencePattern recurrencePattern = getRecurrencePattern(transactionInfo);
-                yield new RecurrentTransaction(accountId, transactionId, date, category, amount, recurrencePattern);
-            }
-            case "ForeignCurrency" -> {
-                BigDecimal exchangeRate = getExchangeRate(transactionInfo);
-                yield new ForeignCurrencyTransaction(accountId, transactionId, date, category, amount, exchangeRate);
-            }
-            case "Commentable" -> {
-                List<String> comments = getComments(transactionInfo);
-                yield new CommentableTransaction(accountId, transactionId, date, category, amount, comments);
-            }
+            case "Taxable" -> new TaxableTransaction(accountId, transactionId, date, category, amount, transactionInfos);
+            case "Recurrent" ->
+                    new RecurrentTransaction(accountId, transactionId, date, category, amount, transactionInfos);
+            case "ForeignCurrency" ->
+                    new ForeignCurrencyTransaction(accountId, transactionId, date, category, amount, transactionInfos);
+            case "Commentable" ->
+                    new CommentableTransaction(accountId, transactionId, date, category, amount, transactionInfos);
             default -> throw new UnknownTransactionTypeException(type);
         };
     }
 
-    private List<String> getComments(String transactionInfo) {
-        return List.of(transactionInfo.split(INFO_DELIMITER));
-    }
-
-    private RecurrencePattern getRecurrencePattern(String transactionInfo) {
-        return RecurrencePattern.of(transactionInfo);
-    }
-
-    private BigDecimal getExchangeRate(String transactionInfo) {
-        return new BigDecimal(transactionInfo);
-    }
-
-    private BigDecimal getTaxRate(String transactionInfo) {
-        return new BigDecimal(transactionInfo);
-    }
 }

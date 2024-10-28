@@ -1,9 +1,11 @@
 package com.skillbox.data.model;
 
+import com.skillbox.exception.WrongTransactionInfoException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
@@ -14,11 +16,15 @@ import lombok.Value;
 public class RecurrentTransaction extends Transaction implements Recurring {
 
     RecurrencePattern recurrencePattern;
+    int count;
 
-    public RecurrentTransaction(int accountId, int transactionId, LocalDateTime date, String category, BigDecimal amount,
-                                RecurrencePattern recurrencePattern) {
+    public RecurrentTransaction(int accountId, int transactionId, LocalDateTime date, String category, BigDecimal amount, List<String> infos) {
         super(accountId, transactionId, date, category, amount);
-        this.recurrencePattern = recurrencePattern;
+        if (infos.size() < 2) {
+            throw new WrongTransactionInfoException(transactionId);
+        }
+        this.recurrencePattern = RecurrencePattern.of(infos.get(0));
+        this.count = Integer.parseInt(infos.get(1));
     }
 
 
@@ -69,12 +75,13 @@ public class RecurrentTransaction extends Transaction implements Recurring {
 
         // Найдем первую дату исполнения после или равной startDate
         LocalDateTime nextOccurrence = initialDate;
+        int count = 0;
         while (startDate != null && nextOccurrence.isBefore(startDate)) {
             nextOccurrence = nextOccurrence.plus(duration);
+            count++;
         }
 
         // Проверим, была ли транзакция выполнена между стартовой и конечной датами
-        return endDate == null || !nextOccurrence.isAfter(endDate);
+        return (endDate == null || !nextOccurrence.isAfter(endDate)) && count < this.count;
     }
-
 }

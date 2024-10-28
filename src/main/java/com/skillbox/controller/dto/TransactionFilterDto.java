@@ -52,19 +52,19 @@ public class TransactionFilterDto {
             LocalDateTime end = endDate == null ? null : endDate.atStartOfDay();
             return (start == null || !date.isBefore(start)) &&
                     (end == null || !date.isAfter(end))
-                    || (transaction instanceof Recurring && ((Recurring) transaction).isExecutedBetween(start, end));
+                    || ((transaction instanceof Recurring recurring) && recurring.isExecutedBetween(start, end));
         };
     }
 
     /**
-     * Создает предикат для фильтрации транзакций по комментарию или его части. Фильтруются только транзакции, имплементирующие интерфейс Commentable. Если токен пустой или null, то возвращается предикат, который всегда вернет true
+     * Создает предикат для фильтрации транзакций по комментарию или его части. Фильтруются только транзакции, имплементирующие интерфейс Commentable. Если токен пустой или null, то возвращается предикат, который всегда вернет true
      *
      * @return Предикат для фильтрации транзакций по комментарию.
      */
     private Predicate<Transaction> commentPredicate() {
         return transaction -> (comment == null || comment.isEmpty())
-                || (transaction instanceof Commentable)
-                &&  ((Commentable) transaction).getComments().stream().anyMatch(c -> c.contains(comment));
+                || (transaction instanceof Commentable commentable)
+                &&  commentable.getComments().stream().anyMatch(c -> c.contains(comment));
     }
 
     /**
